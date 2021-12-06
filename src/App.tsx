@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Confetti from "react-confetti";
 import "./App.css";
 import SingleCard from "./components/SingleCard";
-import useWindowDimensions from "./components/windowDimensions";
 
 const cardImages = [
   { src: "/img/helmet-1.png", matched: false },
@@ -18,10 +17,11 @@ function App() {
   const [turns, setTurns] = useState(0);
   const [choiceOne, setChoiceOne] = useState<iCard | null>(null);
   const [choiceTwo, setChoiceTwo] = useState<iCard | null>(null);
-  const [match, setMatch] = useState(false);
+  const [allMatched, setAllMatched] = useState(false);
   const [disabled, setDisabled] = useState(false);
-  const windowWidth = innerWidth;
-  const windowHeight = innerHeight;
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
+
   // shuffle cards
   const shuffleCards = () => {
     const shuffledCards: iCard[] = [...cardImages, ...cardImages]
@@ -42,7 +42,7 @@ function App() {
     if (choiceOne && choiceTwo) {
       setDisabled(true);
       if (choiceOne?.src === choiceTwo?.src) {
-        setMatch(true);
+        //setMatch(true);
         setCards((prevCards) => {
           return prevCards.map((card) => {
             if (card.src === choiceOne.src) {
@@ -54,7 +54,7 @@ function App() {
         });
         console.log("✅");
       } else {
-        setMatch(false);
+        // setMatch(false);
         console.log("🚫");
       }
       setTimeout(() => {
@@ -69,11 +69,14 @@ function App() {
     setTurns((prevTurns) => prevTurns + 1);
     setDisabled(false);
   };
-  const { height, width } = useWindowDimensions();
+
+  // const { height, width } = useWindowDimensions();
 
   return (
     <div className="App">
-      <Confetti width={width} height={height} />
+      {cards.length > 0 && !!!cards.find((c) => c.matched === false) ? (
+        <Confetti width={windowWidth} height={windowHeight * 3} />
+      ) : null}
       <h1>Magic Match</h1>
       <button onClick={() => shuffleCards()}>New Game</button>
 
